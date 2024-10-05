@@ -11,9 +11,21 @@ This command-line interface (CLI) tool is designed for batch processing of input
    ```
 
 2. **Install Required Dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
+    Create a virtual environment and install the required dependencies:
+    Linux/macOS:
+    ```bash
+    python -m venv venv
+    source venv/bin/activate
+    ```
+    Windows:
+    ```bash
+    python -m venv venv
+    .\venv\Scripts\activate
+    ```
+    Install the required dependencies:
+    ```bash
+    pip install -r requirements.txt
+    ```
 
 ## Usage
 Create a .env file in the root directory of your project and add the following environment variables:
