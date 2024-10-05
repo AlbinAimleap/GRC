@@ -10,7 +10,7 @@ class Config:
     OUTPUT_DIR = BASE_DIR / "output"
     PROMPTS_DIR = BASE_DIR / "prompts"
     
-    OPENAI_API_KEY = os.getenv("OPENAI_API_KEY_PERSONAL")
+    OPENAI_API_KEY = os.getenv("OPENAI_API_KEY_ORG")
     OPENAI_MODEL = "gpt-3.5-turbo-0125"
     
     PROMPT_TEMPLATE_FILE = BASE_DIR / "prompt.txt"
