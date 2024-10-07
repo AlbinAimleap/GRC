@@ -48,7 +48,7 @@ python main.py -I <input_file> -O <output_filename> [-f <format>] [-p <prompt_fi
 
 ### Example:
 ```bash
-python main.py -I input_data.json -O processed_output -f csv -p custom_prompt.txt
+python main.py -I input_data.json -O processed_output.csv
 ```
 This command processes the input from `input_data.json`, utilizes the prompt from `custom_prompt.txt`, and generates the output in CSV format as `processed_output.csv`.
 
