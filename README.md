@@ -54,7 +54,7 @@ This command processes the input from `input_data.json`, utilizes the prompt fro
 
 ## Output
 
-The tool generates an output file in the specified format (json, csv, tsv, or excel) with the provided filename in the current directory.
+The tool generates an output file in the specified format (json, csv, tsv, or excel) with the provided filename in the output directory.
 
 ## Notes
 
