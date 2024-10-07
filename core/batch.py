@@ -43,14 +43,19 @@ class BatchProcessor:
         file = batch_processor.upload_batch_file(batch_input_file)
         batch_request = batch_processor.start_batch(file)
         
+        previous = 0
+        
         while batch_request.status != "completed":
             batch_request = batch_processor.get_batch_status(batch_request.id)
             if batch_request.status == "completed":
                 logger.info(f"Batch status: {batch_request.status}")
                 break
+            
             logger.info(f"Batch status: {batch_request.status}")
-            logger.info(f"Processed: {batch_request.request_counts.completed}/{batch_request.request_counts.total}")
-            logger.info("Waiting for 30 seconds...")
+            if batch_request.request_counts.total != previous:
+                logger.status(f"Processed: {batch_request.request_counts.completed}/{batch_request.request_counts.total}")
+                logger.info("Waiting for 30 seconds...")
+                previous = batch_request.request_counts.completed
             time.sleep(30)
         
         batch_processor.save_responses(batch_request.output_file_id, batch_output_file)

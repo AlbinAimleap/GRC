@@ -30,24 +30,36 @@ class BatchInputProcessor:
             }
         ]
         self.file.load(self.input_filename, modifiers=modifiers)
+        
         if count > 0:
             self.data = self.file.data[:count]
         else:
             self.data = self.file.data
+        
+        with open("output/temp_data.json", "w") as f:
+            json.dump(self.data, f, indent=4)
 
     def load_prompt_template(self) -> None:
         with open(Config.PROMPT_TEMPLATE_FILE, "r") as f:
             self.prompt_txt = f.read()
 
     def generate_prompts(self) -> None:
-        no_descriptions = []
         for item in self.data:
             if item["promo_description"] == "":
                 logger.warning(f"No descriptions found for the following items: {item['id']}")
-                no_descriptions.append(item)
                 continue
             
-            content = self.prompt_txt.replace("{INPUT}", str(item))
+            
+            item_minified = {
+                "id": item["id"], 
+                "regular_price": item["regular_price"], 
+                "sale_price": item["sale_price"], 
+                "promo_description": item["promo_description"], 
+                "promo_price": item["promo_price"], 
+                "unit_price": item["unit_price"],
+                "upc": item["upc"]
+            }
+            content = self.prompt_txt.replace("{INPUT}", str(item_minified))
 
             prompt = {
                 "custom_id": str(uuid4()),
@@ -63,13 +75,13 @@ class BatchInputProcessor:
                         {"role": "user", "content": content},
                     ],
                     "max_tokens": 1000,
+                    "temperature": 0.2,
+                    "top_p":0.1,
+                    
                 },
             }
 
             self.prompts.append(prompt)
-        if no_descriptions:
-            with open(Config.OUTPUT_DIR / "no_descriptions.json", "w") as f:
-                json.dump(no_descriptions, f)
 
     def save_prompts(self) -> None:
         with open(Config.PROMPTS_DIR / self.output_filename, "w") as f:

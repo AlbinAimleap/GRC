@@ -31,7 +31,7 @@ class FileHandler:
 
         if extension in self.loaders:
             logger.info(f"Loading file: {file_path}")
-            return self.loaders[extension](file_path).to_dict(orient='records')
+            return self.loaders[extension](file_path).drop_duplicates().to_dict(orient='records')
         else:
             logger.error(f"Unsupported file format: {extension}")
             raise ValueError(f"Unsupported file format: {extension}")

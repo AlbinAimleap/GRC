@@ -11,7 +11,7 @@ class Config:
     PROMPTS_DIR = BASE_DIR / "prompts"
     
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY_ORG")
-    OPENAI_MODEL = "gpt-3.5-turbo-0125"
+    OPENAI_MODEL = "gpt-4o-mini"
     
     PROMPT_TEMPLATE_FILE = BASE_DIR / "prompt.txt"
     BATCH_INPUT_FILE = PROMPTS_DIR / "batch_inputs.jsonl"

@@ -1,69 +1,91 @@
-Your task is to calculate and update the unit price and the promo price based on the first sentence of the `promo_description` given in the input. The description may include a fixed price, a discount percentage, a quantity, a minimum spend condition, or a combination of these. If no promo description is provided, then the unit price and promo price should be the same as the regular price.
 
-Please ensure the following:
+### Task Description:
 
-1. **Fixed Price**: If the promo description provides a fixed price (e.g., "$6.99"), set the promo price to this amount, and calculate the unit price as follows:
-   - `promo_price = fixed_price`
-   - `unit_price = promo_price` (assuming the quantity is 1)
+Your task is to dynamically calculate and update the `unit_price` and `promo_price` based on any type of promotion description provided in the input. The promotion description may include percentage discounts, fixed discounts, bundles, buy-get offers, spend-based discounts, and multiple promo combinations. If no promo description is provided, the `unit_price` and `promo_price` should be the same as the regular price.
 
-2. **Percentage Discount**: If the promo description contains a percentage (e.g., "10% off"), calculate the promo price as follows:
-   - `promo_price = (sale_price if exists or regular_price) * (1 - (discount_percentage / 100))`
-   - `unit_price = promo_price` (assuming the quantity is 1)
+### Promotion Types and Calculation Logic:
 
-3. **Quantity-Based Discount**: If the promo description specifies a quantity (e.g., "Buy 3 for $11"), calculate the promo price and unit price as follows:
-   - `promo_price = total_price` (e.g., $11)
-   - `unit_price = promo_price / quantity`
+1. **Spend-Based Discounts**:
+    - **$X off when you spend $Y** (e.g., "$5.00 off when you spend $25"):
+      - Apply the discount only if the condition is met (e.g., total spend ≥ $25).
+      - `promo_price = sale_price - discount_value` if the total spend qualifies.
+      - If the condition isn't met, `promo_price = sale_price`.
 
-4. **Buy X Get Y Free**: If the promo description mentions "Buy 1, Get 1 Free," calculate as follows:
-   - `promo_price = (sale_price if exists or regular_price) / (X + Y)` (where X is the quantity bought and Y is the quantity free)
-   - `unit_price = promo_price`
+2. **Fixed Amount Off**:
+    - **$X off per item** (e.g., "$1.00 off 52-oz."):
+      - `promo_price = sale_price - fixed_discount`.
+      - Ensure that any quantity limits are applied appropriately.
 
-5. **Combination Discounts**: If both a quantity and a percentage discount are mentioned (e.g., "Buy 4 get 10% off"), first calculate the total for the quantity, then apply the discount:
-   - `total_price = price for the specified quantity`
-   - `promo_price = total_price * (1 - (discount_percentage / 100))`
-   - `unit_price = promo_price / quantity`
+3. **Buy X, Get Y Promotions**:
+    - **Buy 1 Get 1 Free, Buy X Get Y Free or at a Discount**:
+      - Apply the free or discounted price proportionally to the offer.
 
-6. **Minimum Spend Condition**: If the promo description mentions a discount for a minimum spend (e.g., "$5.00 off when you spend $25"), ensure the following:
-   - **Do not apply the discount directly to individual items**. The discount is only valid if the total price of the participating items reaches or exceeds the minimum spend.
-   - For each individual item, the `promo_price` should be the same as the `regular_price` or `sale_price`, unless the total cart meets the minimum spend. Therefore:
-     - `promo_price = regular_price or sale_price`
-     - `unit_price = promo_price`
+4. **Multi-Buy Offers**:
+    - **Buy X for $Y** (e.g., "2 for $3.00"):
+      - Calculate the price for the specified number of items and compute the unit price.
 
-7. **Limit Conditions**: If there is a limit on the number of items or the total amount (e.g., "Limit 2"), the discount is applied only up to the specified limit. Any additional items beyond the limit will be priced at regular or sale prices.
+5. **Tiered or Combo Discounts**:
+    - **Save $X when buying two or more items in the same transaction**:
+      - Apply the discount only if the required items are purchased together.
 
-### Validation Process:
-Before outputting the calculated results, ensure the following validation steps are applied:
-- **Promo Price Check**: Validate that the calculated `promo_price` is logically consistent with the description (e.g., the promo price should not be less than zero or greater than the regular price unless explicitly stated).
-- **Unit Price Consistency**: Ensure the `unit_price` is calculated correctly based on the promo price and any quantities or limits specified.
-- **Format Validation**: Ensure all calculated results are properly formatted as valid JSON and conform to RFC8259.
+6. **Volume or Bundle Discounts**:
+    - **Save on volume purchases** (e.g., "Save Up To $0.98 on 2 items"):
+      - Apply the discount based on the quantity, ensuring any limits are enforced.
 
-Once the validation is complete and the results are confirmed to be accurate, generate the JSON response.
+7. **Free Items**:
+    - **Get Free Item with Purchase**:
+      - The price of the free item is set to $0 if conditions are met.
+
+8. **Mixed Discount Offers**:
+    - **Multiple Discounts in One Promo**:
+      - Apply all discounts based on the promo description and calculate the total.
+
+### Validation Process (Double-Checked Validation):
+
+Before producing the result, ensure **strict validation** by performing the following steps **twice**:
+
+1. **Preferred Price Field**:
+   - If `sale_price` is provided, PRIORITIZE using it for all calculations. If not, use `regular_price`.
+   - USE `regular_price` FOR CALCULATIONS ONLY IF `sale_price` IS EMPTY.
+
+2. **Promo Price Calculation**:
+   - Validate that the calculated `promo_price` is correctly derived from the first sentence of the `promo_description`. Ensure it aligns with the type of promo (fixed discount, percentage discount, bundle, etc.).
+   
+3. **Unit Price Calculation**:
+   - Ensure the `unit_price` reflects the correct price for one unit, based on the total `promo_price` and quantities or limits mentioned in the promo description.
+   
+4. **Condition Validation**:
+   - Validate that any conditions like minimum spend, quantity requirements, or transaction rules (e.g., "Limit 1 offer," "Must buy two items together") are respected.
+
+5. **Final Validation**:
+   - After initial calculations, validate the logic again by checking:
+     - Correct usage of prices (`sale_price` vs `regular_price`).
+     - Accurate discount and unit price calculations.
+     - Consistent formatting and valid JSON output (compliant with RFC8259).
 
 ### Input:
 {INPUT}
 
-Do not include any explanations. Only provide an RFC8259-compliant JSON response following this format without deviation:
+### Input Example:
+```json
+{
+    "id": "12345",
+    "regular_price": "10.00",
+    "sale_price": "8.00",
+    "promo_description": "Save $2.00 when you buy 2. Limit 1 offer."
+}
+```
+
+Do not include explanations. Only provide an RFC8259-compliant JSON response using this format:
 
 {
-    "zipcode": "zipcode", 
-    "store_name": "store name", 
-    "store_location": "store_location", 
-    "store_logo": "store_logo", 
-    "category": "category", 
-    "sub_category": "sub_category", 
-    "product_title": "product title", 
-    "weight": "weight", 
+    "id": "Id of the product",
     "regular_price": "regular price", 
     "sale_price": "sale price if any", 
     "promo_description": "promo description", 
-    "promo_price": "calculated promo price from the first sentence of the description or same as regular price if no description", 
-    "unit_price": "calculated unit price from the first sentence of the description or same as regular price if no description",
-    "image_url": "Image url", 
-    "url": "url", 
-    "upc": "upc", 
-    "crawl_date": "crawl date", 
-    "coupon_short_description": "coupon short description", 
-    "coupon_description": "coupon description" 
+    "promo_price": "calculated promo price from the first sentence of the description or same as sale price if no description", 
+    "unit_price": "calculated unit price from the first sentence of the description or same as sale price if no description"
 }
 
 The JSON Response:
+
