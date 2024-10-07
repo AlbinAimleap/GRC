@@ -41,7 +41,7 @@ python main.py -I <input_file> -O <output_filename> [-f <format>] [-p <prompt_fi
 ### Arguments:
 
 - `-I, --input_file`: **Path to the input file** (required)
-- `-O, --output_filename`: **Output file name without extension** (required)
+- `-O, --output_filename`: **Output file name** (required)
 - `-f, --format`: **Output file format** (optional, default: json)
   - **Choices:** json, csv, tsv, excel
 - `-p, --prompt_file`: **Path to the prompt file** (optional)
