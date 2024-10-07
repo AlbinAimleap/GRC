@@ -52,7 +52,7 @@ class BatchProcessor:
                 break
             
             logger.info(f"Batch status: {batch_request.status}")
-            if batch_request.request_counts.total != previous:
+            if batch_request.request_counts.completed != previous:
                 logger.status(f"Processed: {batch_request.request_counts.completed}/{batch_request.request_counts.total}")
                 logger.info("Waiting for 30 seconds...")
                 previous = batch_request.request_counts.completed
