@@ -17,9 +17,30 @@ Your task is to dynamically calculate and update the `unit_price` and `promo_pri
       - Ensure that any quantity limits are applied appropriately.
 
 3. **Buy X, Get Y Promotions**:
-    - **Buy 1 Get 1 Free, Buy X Get Y Free or at a Discount**:
-      - Apply the free or discounted price proportionally to the offer.
-
+    - **Buy X Get Y Free or at a Discount**:
+      - Calculate the total cost for the promotion: `total_cost = X * sale_price` or `total_cost = X * regular_price`.
+      - Calculate the total number of items: `total_items = X + Y`.
+      - Calculate the unit price: `unit_price = total_cost / total_items`.
+      - Set `promo_price = total_cost`.
+    
+    Examples:
+    - Buy 1 Get 1 Free (sale_price = $10):
+      - total_cost = 1 * $10 = $10
+      - total_items = 1 + 1 = 2
+      - unit_price = $10 / 2 = $5
+      - promo_price = $5
+    
+    - Buy 2 Get 3 Free (sale_price = $10):
+      - total_cost = 2 * $10 = $20
+      - total_items = 2 + 3 = 5
+      - unit_price = $20 / 5 = $4
+      - promo_price = $4
+    
+    - Buy 2 Get 1 50% Off (sale_price = $10):
+      - total_cost = (2 * $10) + (0.5 * $10) = $25
+      - total_items = 2 + 1 = 3
+      - unit_price = $25 / 3 ≈ $8.33
+      - promo_price = $8.33
 4. **Multi-Buy Offers**:
     - **Buy X for $Y** (e.g., "2 for $3.00"):
       - Calculate the price for the specified number of items and compute the unit price.

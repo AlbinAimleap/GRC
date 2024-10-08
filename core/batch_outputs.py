@@ -26,10 +26,7 @@ class BatchOutputProcessor:
             print(item["error"])
             return None
         content: str = item["response"]["body"]["choices"][0]["message"]["content"]
-        content = content.replace("", "") \
-                    .replace("", "") \
-                    .replace('"', '"') \
-                    .replace("...", ",") \
+        content = content.replace("...", ",") \
                     .replace("```json", "") \
                     .replace("```", "")
         try:
@@ -81,9 +78,7 @@ class BatchOutputProcessor:
         """Saves the processed data to a file in the specified format."""
         filtered_data = [item for item in data if item is not None]
         temp_data = BatchOutputProcessor.load_json_file(Path("output/temp_data.json"))
-        
         merged_data = BatchOutputProcessor.merge_data(temp_data, filtered_data)
-        
         df = BatchOutputProcessor.clean_dataframe(pd.DataFrame(merged_data))
 
         format_handlers = {
@@ -104,9 +99,7 @@ class BatchOutputProcessor:
         output_file = Config.OUTPUT_DIR / self.output_filename
         data = self.load_data(input_file)
         processed_items = [self.process_item(item) for item in data if self.process_item(item) is not None]
-        
         self.save_data(output_file, processed_items, self.format)
-        
         logger.info(f"Processed {len(processed_items)} items.")
         return self.format
 

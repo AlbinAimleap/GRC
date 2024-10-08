@@ -37,7 +37,7 @@ class NtfyHandler(logging.Handler):
             response = requests.post(url, data=message.encode("utf-8"), headers=headers)
             response.raise_for_status()
         except requests.RequestException as e:
-            print(f"Failed to send notification: {str(e)}")
+            pass
 
     def emit(self, record):
         log_entry = self.format(record)

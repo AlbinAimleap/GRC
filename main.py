@@ -6,6 +6,7 @@ from core.batch_inputs import BatchInputProcessor
 from core.batch_outputs import BatchOutputProcessor
 from core.batch import BatchProcessor
 from core.config import Config
+from pathlib import Path
 
 
 class BatchProcessingManager:
@@ -52,7 +53,7 @@ def main():
     parser.add_argument("-c", "--count", help="Path to the prompt file (optional)", default=0)
     
     args = parser.parse_args()
-    
+    supported_file_formats = ["csv", "json", "tsv", "xlsx"]
     manager = BatchProcessingManager(args.input_file, args.output_filename, args.prompt_file, args.format, args.count)
     manager.run()
 
